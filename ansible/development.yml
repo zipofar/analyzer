@@ -1,0 +1,31 @@
+- hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Make env for Docker
+      template:
+        src: templates/env_docker.j2 
+        dest: '../.env' 
+
+    - name: Make dir
+      file:
+        path: ../mysql/docker-entrypoint-initdb.d
+        state: directory
+        mode: 0755
+
+    - name: Make dir
+      file:
+        path: ../mysql/db
+        state: directory
+        mode: 0755
+
+    - name: Make dir
+      file:
+        path: ../nginx/log
+        state: directory
+        mode: 0755
+
+    - name: Make instruction for create db
+      template:
+        src: templates/01_create_db.sql.j2
+        dest: '../mysql/docker-entrypoint-initdb.d/01_create_db.sql'
