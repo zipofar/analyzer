@@ -1,3 +1,5 @@
+vault_app_key: ""
+vault_slack_webhook: ""
 vault_db_hostname: "mariadb"
 vault_db_name: "analyzer"
 vault_db_username: "analyzer"

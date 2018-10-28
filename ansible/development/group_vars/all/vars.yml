@@ -1,2 +1,8 @@
-webserver_port: 4000
+webserver_port: 4001
+app_env: "local"
 app_debug: true
+app_timezone: "UTC"
+log_channel: "stack"
+db_port: 3306
+cache_driver: "file"
+queue_driver: "sync"

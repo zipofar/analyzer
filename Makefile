@@ -8,18 +8,22 @@ kill:
 	docker-compose kill
 
 development-setup:
-	docker-compose run php make dev-setup
-
-production-setup:
-	docker-compose run php make prod-setup
+	docker-compose -f docker-compose_dev.yml run php make dev-setup
 
 test-unit:
 	docker-compose -f docker-compose_dev.yml exec php make test-unit
 
-test-behat:
-	docker-compose -f docker-compose_dev.yml exec php make test-behat
+ansible-development-setup:
+	mkdir -p tmp
+	echo '' >> tmp/ansible-vault-password
+	ansible-playbook ansible/development.yml -i ansible/development -vv
 
-test-all: test-unit test-behat
+
+
+
+
+production-setup:
+	docker-compose run php make prod-setup
 
 migrate:
 	docker-compose -f docker-compose_dev.yml exec php make migrate
@@ -27,10 +31,6 @@ migrate:
 seeder:
 	docker-compose -f docker-compose_dev.yml exec php make seeder
 
-ansible-development-setup:
-	mkdir -p tmp
-	echo 'password' > tmp/ansible-vault-password
-	ansible-playbook ansible/development.yml -i ansible/development -vv
 
 ansible-production-setup:
 	mkdir -p tmp

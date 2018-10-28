@@ -7,6 +7,11 @@
         src: templates/env_docker.j2 
         dest: '../.env' 
 
+    - name: Make env for App
+      template:
+        src: templates/env_app.j2 
+        dest: '../app/.env' 
+
     - name: Make dir
       file:
         path: ../mysql/docker-entrypoint-initdb.d
