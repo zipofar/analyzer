@@ -30,11 +30,13 @@ class ParserTest extends TestCase
 
     public function test_getTagScript()
     {
-        $expected_0 = '<script type="text/javascript" charset="utf-8" src="/lib/exe/jquery.php?tseed=23f888679b4f1dc26eef34902aca964f"></script>';
-        $expected_1 = '<script type="text/javascript" charset="utf-8" src="/lib/exe/js.php?t=dokuwiki&amp;tseed=a96ae5cccf2cee954045f50f548235ac"></script>';
+        $expected_0 = [
+            'tag' => '<script>(function(H){H.className=H.className.replace(/\bno-js\b/,\'js\')})(document.documentElement)</script>',
+            'attr' => '',
+            'body' => '(function(H){H.className=H.className.replace(/\bno-js\b/,\'js\')})(document.documentElement)'
+        ];
         $resParse = \App\Misc\Parser::getTagScript(self::$page);
         $this->assertEquals($expected_0, $resParse[0]);
-        $this->assertEquals($expected_1, $resParse[1]);
     }
 
     public function test_getTagScript_IfNoScript()

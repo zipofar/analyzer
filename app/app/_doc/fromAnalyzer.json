@@ -1,0 +1,52 @@
+{
+  "page": {
+    "bad_request": []
+  },
+  "server": {
+    "response_time": 235
+  },
+  "scripts": {
+    "total_size": 1500,
+    "ext_size": 1000,
+    "int_size": 500,
+    "ext_count":  50,
+    "int_count": 5,
+    "inline": [
+      "function Foo() {}",
+      "function Baz() {}"
+    ],
+    "int_src": [
+      "/dfd/dfdg/fg/dg.js",
+      "/dfdgf/fgf.df/dfdfd.js?dfdf"
+    ],
+    "ext_src": [
+      "https://google.com/dfd/dfdg/fg/dg.js",
+      "https://google.com//dfdgf/fgf.df/dfdfd.js?dfdf"
+    ]
+  },
+  "css": {
+    "total_size": 1500,
+    "ext_size": 1000,
+    "int_size": 500,
+    "ext_count":  50,
+    "int_count": 5,
+    "inline": [
+      "p {}",
+      "div {}"
+    ],
+    "int_src": [
+      "/dfd/dfdg/fg/dg.css",
+      "/dfdgf/fgf.df/dfdfd.css?dfdf"
+    ],
+    "ext_src": [
+      "https://google.com/dfd/dfdg/fg/dg.css",
+      "https://google.com//dfdgf/fgf.df/dfdfd.css?dfdf"
+    ]
+  },
+  "img": {
+    "images": [
+      {"name": "345435.jpg", "local_src": "/storage/site/sdfgdsgf45634/images/345435.jpg"},
+      {"name": "46546d.jpg", "local_src": "/storage/site/sdfgdsgf45634/images/46546d.jpg"}
+    ]
+  }
+}

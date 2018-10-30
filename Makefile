@@ -13,6 +13,9 @@ development-setup:
 test-unit:
 	docker-compose -f docker-compose_dev.yml exec php make test-unit
 
+test-func:
+	docker-compose -f docker-compose_dev.yml exec php make test-func
+
 ansible-development-setup:
 	mkdir -p tmp
 	echo '' >> tmp/ansible-vault-password

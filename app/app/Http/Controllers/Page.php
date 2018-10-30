@@ -2,36 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Misc\Downloader;
+use App\Resources\Html;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
-use GuzzleHttp\Client;
-use App\Misc\Helper;
 
 class Page extends BaseController
 {
-    public function handle(Request $request, Client $client)
+    protected $response;
+    protected $url;
+
+
+    public function handle(Request $request, Downloader $downloader)
     {
         $url = $request->input('url');
+
+
         try {
-            $response = $client->get($url);
+            $page = $downloader->download($url);
         } catch (\Exception $e) {
             return 'Resource not found';
         }
-        $code = $response->getStatusCode();
 
-        if ($code !== 200) {
+        if ($page->code !== 200) {
             return 'Not available resource';
         }
-        $headers = $response->getHeader('Content-Type')[0] ?? '';
 
-        if (!Helper::isHtml($headers)) {
+        if (!\App\Misc\Helper::isHtml($page->contentType)) {
             return 'Not HTML resource';
         }
+
+        $tag = $page->response->getBody();
+        $html = new Html($tag);
+
+
+
+        $collector = new \App\Misc\Collector($html);
+        //$resources = $collector->getResources();
+/*
+        $analyzer = new \App\Misc\Analyzer($resources);
+        $resultOfAnalysis = $analyzer->getAnalysis();
+*/
         return 'OK';
     }
 
-    private function isHtml($str)
-    {
-        
-    }
+
 }
