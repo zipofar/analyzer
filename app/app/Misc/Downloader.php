@@ -33,8 +33,6 @@ class Downloader
         $this->parseUrl($this->getLastRedirect());
         $this->code = $response->getStatusCode();
 
-
-
         $this->contentType = $response->getHeader('Content-Type')[0] ?? '';
 
         return $this;
@@ -50,6 +48,9 @@ class Downloader
         if ($method === null || $domain === null) {
             throw new \Exception('Can not parse url ->'. $url);
         }
+
+        $this->domain = $domain;
+        $this->method = $method;
     }
 
     public function getLastRedirect()

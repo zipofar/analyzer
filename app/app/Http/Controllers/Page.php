@@ -19,26 +19,27 @@ class Page extends BaseController
 
 
         try {
-            $page = $downloader->download($url);
+            $resource = $downloader->download($url);
         } catch (\Exception $e) {
             return 'Resource not found';
         }
 
-        if ($page->code !== 200) {
+        if ($resource->code !== 200) {
             return 'Not available resource';
         }
 
-        if (!\App\Misc\Helper::isHtml($page->contentType)) {
+        if (!\App\Misc\Helper::isHtml($resource->contentType)) {
             return 'Not HTML resource';
         }
 
-        $tag = $page->response->getBody();
-        $html = new Html($tag);
+        $body = $resource->response->getBody();
+        $page = new Html($body, $resource->method, $resource->domain);
 
 
 
-        $collector = new \App\Misc\Collector($html);
-        //$resources = $collector->getResources();
+        $collector = new \App\Misc\Collector($page);
+        $resources = $collector->getResources();
+        var_dump($resources);
 /*
         $analyzer = new \App\Misc\Analyzer($resources);
         $resultOfAnalysis = $analyzer->getAnalysis();

@@ -6,21 +6,21 @@ use App\Resources\FabricResources;
 
 class Collector
 {
-    protected $html;
+    protected $page;
 
     protected $resources = [];
 
-    public function __construct($html)
+    public function __construct($page)
     {
-        $this->html = $html;
+        $this->page = $page;
         $this->initialize();
     }
 
     public function initialize()
     {
-        $html = $this->html;
+        $page = $this->page;
 
-        $scripts = \App\Misc\Parser::getScripts($html);
+        $scripts = \App\Misc\Parser::getScripts($page->resource);
         $this->addResources($scripts, \App\Resources\Script::class);
 /*
         $styles = \App\Misc\Parser::getStyles($html);
@@ -36,7 +36,12 @@ class Collector
 
     protected function addResources(array $resources, $class)
     {
-        $newResources = FabricResources::buildResources($resources, $class);
+        $newResources = FabricResources::buildResources($resources, $class, $this->page);
         $this->resources = array_merge($this->resources, $newResources);
+    }
+
+    public function getResources()
+    {
+        return $this->resources;
     }
 }

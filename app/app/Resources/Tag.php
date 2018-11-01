@@ -14,21 +14,24 @@ abstract class Tag
     const METHOD_HTTP = 'http';
     const METHOD_HTTPS = 'https';
 
-    protected $uid;
-    protected $location = '';
+    private $uid;
+    private $location = '';
     protected $resource = '';
     protected $attr = [];
     protected $body = '';
     protected $url = '';
-    protected $httpMethod = '';
-    protected $domain = '';
+    private $httpMethod = '';
+    private $domain = '';
+    protected $page;
 
-    public function __construct($resource)
+    public function __construct($resource, \App\Resources\Html $page)
     {
         $this->uid = uniqid();
         $this->resource = $resource;
-        $this->parseTag();
-        $this->setLocation();
+        $this->page = $page;
+        $this->parseTag($this->getPattern());
+        $this->defineFqdnUrl($this->getUrlKey());
+        $this->defineLocation();
     }
 
     public function setHttpMethod($method)
@@ -62,5 +65,61 @@ abstract class Tag
         return $this->$name;
     }
 
-    abstract public function parseTag();
+    public function parseTag($pattern)
+    {
+        if ($pattern === null) {
+            return;
+        }
+        preg_match($pattern, $this->resource, $matches);
+        $this->body = $matches['body'];
+        $attributes = $matches['attr'];
+
+        if (!empty($attributes)) {
+            $arrAttr = explode(' ', ltrim($attributes));
+            $newAttr = array_reduce($arrAttr, function ($acc, $item) {
+                $keyVal = explode('=', $item);
+                return array_merge($acc, [$keyVal[0] => trim($keyVal[1], '"\'')]);
+            }, []);
+            $this->attr = $newAttr;
+        }
+    }
+
+    public function defineFqdnUrl($urlKey)
+    {
+        if (empty($urlKey) || !isset($this->attr[$urlKey])) {
+            return;
+        }
+        $originalSrc = $this->attr[$urlKey] ?? '';
+        $firstLetter = trim($originalSrc)[0];
+        if ($firstLetter === '/') {
+            $this->url = $this->page->httpMethod.'://'.$this->page->domain.$originalSrc;
+            $this->setHttpMethod($this->page->httpMethod);
+            $this->setDomain($this->page->domain);
+            return;
+        }
+
+        $firstFourSymbols = mb_strtolower(array_slice($originalSrc, 0, 4));
+        if ($firstFourSymbols === 'http') {
+            $this->url = $originalSrc;
+            $this->setHttpMethod(Parser::getHttpMethod($originalSrc));
+            $this->setDomain(Parser::getDomain($originalSrc));
+            return;
+        }
+    }
+
+    public function defineLocation()
+    {
+        if ($this->body !== '') {
+            $this->setLocation(self::INLINE);
+            return;
+        }
+        if ($this->page->domain === $this->domain) {
+            $this->setLocation(self::INTERNAL);
+            return;
+        }
+        $this->setLocation(self::EXTERNAL);
+    }
+
+    abstract public function getPattern();
+    abstract public function getUrlKey();
 }

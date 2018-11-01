@@ -5,20 +5,14 @@ namespace App\Resources;
 
 class Script extends Tag
 {
-    public function parseTag()
+    public function getPattern()
     {
-        $pattern = '/<script.*?(?P<attr>.*?)>(?P<body>.*?)<\/script>/mi';
-        preg_match_all($pattern, $this->tag, $matches);
-        $attributes = $matches[0]['attr'] ?? '';
-        $this->attr = explode(' ', ltrim($attributes));
-        $this->body = $matches[0]['body'] ?? '';
+        return '/<script.*?(?P<attr>.*?)>(?P<body>.*?)<\/script>/mi';
     }
 
-    public function setLocation()
+    public function getUrlKey()
     {
-        if ($this->body !== '') {
-            $this->location = self::INLINE;
-            return;
-        }
+        return 'src';
     }
+
 }
