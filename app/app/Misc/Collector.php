@@ -6,14 +6,21 @@ use App\Resources\FabricResources;
 
 class Collector
 {
-    protected $page;
+    protected $html;
 
     protected $resources = [];
 
-    public function __construct($page)
+    protected $downloader;
+
+    public function __construct(\App\Misc\Downloader $downloader)
     {
-        $this->page = $page;
+        $this->downloader = $downloader;
         $this->initialize();
+    }
+
+    public function setHtml(\App\Resources\Html $html)
+    {
+        $this->html = $html;
     }
 
     public function initialize()
@@ -32,6 +39,16 @@ class Collector
         $images = \App\Misc\Parser::getImages($html);
         $this->addResources($images, 'img');
 */
+    }
+
+    protected function download()
+    {
+        foreach ($this->resources as $resource) {
+            if (!empty($resource->url)) {
+                $this->downloader->addResource($resource->uid, $resource->url);
+            }
+        }
+        $this->downloader->download();
     }
 
     protected function addResources(array $resources, $class)

@@ -24,11 +24,11 @@ abstract class Tag
     private $domain = '';
     protected $page;
 
-    public function __construct($resource, \App\Resources\Html $page)
+    public function __construct($resource, \App\Resources\Html $html)
     {
         $this->uid = uniqid();
         $this->resource = $resource;
-        $this->page = $page;
+        $this->page = $html;
         $this->parseTag($this->getPattern());
         $this->defineFqdnUrl($this->getUrlKey());
         $this->defineLocation();

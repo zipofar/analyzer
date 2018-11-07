@@ -13,33 +13,22 @@ class Page extends BaseController
     protected $url;
 
 
-    public function handle(Request $request, Downloader $downloader)
+    public function handle(Request $request, \App\Misc\PageDownloader $downloader)
     {
         $url = $request->input('url');
-
 
         try {
             $resource = $downloader->download($url);
         } catch (\Exception $e) {
-            return 'Resource not found';
+            return var_dump($e->getMessage());
         }
 
-        if ($resource->code !== 200) {
-            return 'Not available resource';
-        }
+        $downloadedHtmlPage = $resource->response->getBody();
+        $html = new Html($downloadedHtmlPage, $resource->method, $resource->domain);
 
-        if (!\App\Misc\Helper::isHtml($resource->contentType)) {
-            return 'Not HTML resource';
-        }
-
-        $body = $resource->response->getBody();
-        $page = new Html($body, $resource->method, $resource->domain);
-
-
-
-        $collector = new \App\Misc\Collector($page);
+        $collector = new \App\Misc\Collector();
+        $collector->setHtml($html);
         $resources = $collector->getResources();
-        var_dump($resources);
 /*
         $analyzer = new \App\Misc\Analyzer($resources);
         $resultOfAnalysis = $analyzer->getAnalysis();

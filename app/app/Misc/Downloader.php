@@ -8,57 +8,33 @@ class Downloader
 {
     protected $url;
     protected $client;
-    public $response;
-    public $method;
-    public $domain;
-    public $code;
-    public $contentType;
+    protected $response;
+    protected $method;
+    protected $domain;
+    protected $code;
+    protected $contentType;
+    protected $id;
 
     public function __construct(Client $client)
     {
         $this->client = $client;
     }
 
-    public function download($url)
+    public function download()
     {
         $this->url = $url;
 
-        $this->response = $response = $this->client->request('GET', $url,
+        $this->response = $response = $this->client->request(
+            'GET',
+            $url,
             [
-            'allow_redirects' => [
-                'track_redirects' => true
+                'sink' => __DIR__.'/../../storage/sites/z',
             ]
-        ]);
-
-        $this->parseUrl($this->getLastRedirect());
-        $this->code = $response->getStatusCode();
-
-        $this->contentType = $response->getHeader('Content-Type')[0] ?? '';
-
-        return $this;
+        );
     }
 
-    public function parseUrl($lastRedirect)
+    public function __get($name)
     {
-        $url = $lastRedirect !== '' ? $lastRedirect : $this->url;
-
-        $method = \App\Misc\Parser::getHttpMethod($url);
-        $domain = \App\Misc\Parser::getDomain($url);
-
-        if ($method === null || $domain === null) {
-            throw new \Exception('Can not parse url ->'. $url);
-        }
-
-        $this->domain = $domain;
-        $this->method = $method;
-    }
-
-    public function getLastRedirect()
-    {
-        $redirects = $this->response->getHeaderLine('X-Guzzle-Redirect-History');
-        $arrRedirects = explode(', ', $redirects);
-        $lastRedirect = $arrRedirects[sizeof($arrRedirects) - 1] ?? '';
-
-        return $lastRedirect;
+        return $this->$name;
     }
 }
