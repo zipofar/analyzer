@@ -28,6 +28,9 @@ class Collector
     {
         $scripts = \App\Misc\Parser::getScripts($this->html->resource);
         $this->addResources($scripts, \App\Resources\Script::class);
+
+        $images = \App\Misc\Parser::getImages($this->html->resource);
+        $this->addResources($images, \App\Resources\Images::class);
 /*
         $styles = \App\Misc\Parser::getStyles($html);
         $this->addResources($styles, 'style');

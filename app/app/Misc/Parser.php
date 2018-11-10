@@ -4,11 +4,12 @@ namespace App\Misc;
 
 class Parser
 {
-    public static function getTagImg($html)
+    public static function getImages($html)
     {
         $pattern = '/<img.*?>/mi';
         preg_match_all($pattern, $html, $matches);
-        return $matches[0];
+        $tags = $matches[0];
+        return $tags;
     }
 
     public static function getScripts($html)

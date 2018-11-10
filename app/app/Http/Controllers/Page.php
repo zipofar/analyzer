@@ -22,7 +22,7 @@ class Page extends BaseController
             return var_dump($e->getMessage());
         }
 
-        $downloadedHtmlPage = $resource->response->getBody();
+        $downloadedHtmlPage = \App\Misc\Helper::clearUnusedSymbols($resource->response->getBody());
         $html = new Html($downloadedHtmlPage, $resource->method, $resource->domain);
         $html->setStats($resource->stats);
 

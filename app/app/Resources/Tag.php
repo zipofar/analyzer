@@ -87,7 +87,7 @@ abstract class Tag
             return;
         }
         preg_match($pattern, $this->resource, $matches);
-        $this->body = $matches['body'];
+        $this->body = $matches['body'] ?? '';
         $attributes = $matches['attr'];
 
         if (!empty($attributes)) {
