@@ -30,6 +30,7 @@ class Analyzer
         $result = [];
         $html = $this->collector->getHtml();
         $result['response_time'] = $html->stats['starttransfer_time'] * 1000;
+        $result['count_redirects'] = sizeof($html->stats['redirects']['urls']);
         return $result;
     }
 
