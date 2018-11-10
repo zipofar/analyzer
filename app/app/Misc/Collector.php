@@ -87,10 +87,30 @@ class Collector
         return $this->html;
     }
 
-    public function getTags()
+    public function getAllTags()
     {
         return $this->resources;
     }
 
+    public function getExtScripts()
+    {
+        return array_filter($this->resources, function ($item) {
+            return $item instanceof \App\Resources\Script && $item->location === \App\Resources\Tag::EXTERNAL;
+        });
+    }
+
+    public function getIntScripts()
+    {
+        return array_filter($this->resources, function ($item) {
+            return $item instanceof \App\Resources\Script && $item->location === \App\Resources\Tag::INTERNAL;
+        });
+    }
+
+    public function getInlineScripts()
+    {
+        return array_filter($this->resources, function ($item) {
+            return $item instanceof \App\Resources\Script && $item->location === \App\Resources\Tag::INLINE;
+        });
+    }
 
 }
