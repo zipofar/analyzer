@@ -8,13 +8,11 @@ use Psr\Http\ResponseInterface;
 
 class PageDownloader
 {
-    protected $url;
     protected $client;
     protected $response;
     protected $method;
     protected $domain;
     protected $code;
-    protected $id;
     protected $stats;
 
     public function __construct(Client $client)
@@ -24,8 +22,6 @@ class PageDownloader
 
     public function download($url)
     {
-        $this->url = $url;
-        $this->id = md5($url);
         try {
             $this->response = $response = $this->client->request('GET', $url,
                 [

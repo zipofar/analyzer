@@ -14,23 +14,29 @@ abstract class Tag
     const METHOD_HTTP = 'http';
     const METHOD_HTTPS = 'https';
 
-    private $uid;
-    private $location = '';
+    protected $uid;
+    protected $location = '';
     protected $resource = '';
     protected $attr = [];
     protected $body = '';
     protected $url = '';
-    private $httpMethod = '';
-    private $domain = '';
-    protected $page;
+    protected $httpMethod = '';
+    protected $domain = '';
+    protected $html;
+    protected $stats = [];
+
+    protected $pattern = null;
+    protected $urlKey = null;
+
+    protected $filePath = '';
 
     public function __construct($resource, \App\Resources\Html $html)
     {
         $this->uid = uniqid();
         $this->resource = $resource;
-        $this->page = $html;
-        $this->parseTag($this->getPattern());
-        $this->defineFqdnUrl($this->getUrlKey());
+        $this->html = $html;
+        $this->parseTag($this->pattern);
+        $this->defineFqdnUrl($this->urlKey);
         $this->defineLocation();
     }
 
@@ -58,6 +64,16 @@ abstract class Tag
     public function setDomain($domain)
     {
         $this->domain = $domain;
+    }
+
+    public function setFilePath($path)
+    {
+        $this->filePath = $path;
+    }
+
+    public function setStats(array $stats)
+    {
+        $this->stats = array_merge($this->stats, $stats);
     }
 
     public function __get($name)
@@ -92,9 +108,9 @@ abstract class Tag
         $originalSrc = $this->attr[$urlKey] ?? '';
         $firstLetter = trim($originalSrc)[0];
         if ($firstLetter === '/') {
-            $this->url = $this->page->httpMethod.'://'.$this->page->domain.$originalSrc;
-            $this->setHttpMethod($this->page->httpMethod);
-            $this->setDomain($this->page->domain);
+            $this->url = $this->html->httpMethod.'://'.$this->html->domain.$originalSrc;
+            $this->setHttpMethod($this->html->httpMethod);
+            $this->setDomain($this->html->domain);
             return;
         }
 
@@ -113,13 +129,10 @@ abstract class Tag
             $this->setLocation(self::INLINE);
             return;
         }
-        if ($this->page->domain === $this->domain) {
+        if ($this->html->domain === $this->domain) {
             $this->setLocation(self::INTERNAL);
             return;
         }
         $this->setLocation(self::EXTERNAL);
     }
-
-    abstract public function getPattern();
-    abstract public function getUrlKey();
 }

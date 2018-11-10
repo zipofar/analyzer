@@ -1,6 +1,6 @@
 {
   "page": {
-    "bad_request": []
+    "redirects": 3
   },
   "server": {
     "response_time": 235

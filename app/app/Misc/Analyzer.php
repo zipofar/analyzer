@@ -6,35 +6,47 @@ use App\Misc\Collector;
 
 class Analyzer
 {
-    protected $resources;
+    protected $collector;
 
-    public function __construct(Collector $resources)
+    protected $result = [];
+
+    public function __construct(Collector $collector)
     {
-        $this->resources = $resources;
+        $this->collector = $collector;
     }
 
-    public function getAnalysis()
+    public function getAnalyzes()
     {
-        $esult['avg_response_time'] = $this->getAvgResponseTime();
-        $result['scripts']['total_size'] = $this->getTotalSizeResource('script');
+        $this->result['page'] = $this->getPageAnalyzes();
+        //$result['avg_response_time'] = $this->getAvgResponseTime();
+        //$result['scripts']['total_size'] = $this->getTotalSizeResource('script');
 
+        return $this->result;
+    }
+
+    protected function getPageAnalyzes()
+    {
+        $result = [];
+        $html = $this->collector->getHtml();
+        $result['response_time'] = $html->stats['starttransfer_time'] * 1000;
+var_dump($html->stats);
         return $result;
     }
 
     public function getAvgResponseTime()
     {
         $time = 0;
-        foreach ($this->resources as $resource) {
+        foreach ($this->collector as $resource) {
             $time += (int) $resource->server['response_time'];
         }
-        $avgTime = $time / sizeof($this->resources);
+        $avgTime = $time / sizeof($this->collector);
         return $avgTime;
     }
 
     public function getTotalSizeResource($tagName)
     {
         $size = 0;
-        foreach ($this->resources as $resource) {
+        foreach ($this->collector as $resource) {
             if ($resource->tagName === $tagName) {
                 $size += $resource->headers['Content-Length'] ?? 0;
             }

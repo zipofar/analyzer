@@ -12,7 +12,6 @@ class Page extends BaseController
     protected $response;
     protected $url;
 
-
     public function handle(Request $request, \App\Misc\PageDownloader $downloader)
     {
         $url = $request->input('url');
@@ -25,14 +24,18 @@ class Page extends BaseController
 
         $downloadedHtmlPage = $resource->response->getBody();
         $html = new Html($downloadedHtmlPage, $resource->method, $resource->domain);
+        $html->setStats($resource->stats);
 
-        $collector = new \App\Misc\Collector();
+        //$collector = new \App\Misc\Collector();
+        $collector = app(\App\Misc\Collector::class);
         $collector->setHtml($html);
-        $resources = $collector->getResources();
-/*
-        $analyzer = new \App\Misc\Analyzer($resources);
-        $resultOfAnalysis = $analyzer->getAnalysis();
-*/
+        $collector->getResources();
+        //var_dump($collector);
+
+        $analyzer = new \App\Misc\Analyzer($collector);
+        $resultOfAnalyzes = $analyzer->getAnalyzes();
+        var_dump($resultOfAnalyzes);
+
         return 'OK';
     }
 
