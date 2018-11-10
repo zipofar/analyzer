@@ -94,7 +94,10 @@ abstract class Tag
             $arrAttr = explode(' ', ltrim($attributes));
             $newAttr = array_reduce($arrAttr, function ($acc, $item) {
                 $keyVal = explode('=', $item);
-                return array_merge($acc, [$keyVal[0] => trim($keyVal[1], '"\'')]);
+                $key = $keyVal[0];
+                $value = $keyVal[1] ?? '';
+                $value = trim($value, '"\'');
+                return array_merge($acc, [$key => $value]);
             }, []);
             $this->attr = $newAttr;
         }
@@ -114,8 +117,7 @@ abstract class Tag
             return;
         }
 
-        $firstFourSymbols = mb_strtolower(array_slice($originalSrc, 0, 4));
-        if ($firstFourSymbols === 'http') {
+        if (mb_stripos($originalSrc, 'http') === 0) {
             $this->url = $originalSrc;
             $this->setHttpMethod(Parser::getHttpMethod($originalSrc));
             $this->setDomain(Parser::getDomain($originalSrc));
