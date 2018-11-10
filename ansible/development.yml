@@ -30,6 +30,18 @@
         state: directory
         mode: 0755
 
+    - name: Make dir
+      file:
+        path: ../app/storage/logs
+        state: directory
+        mode: 0777
+
+    - name: Make dir
+      file:
+        path: ../app/storage/sites
+        state: directory
+        mode: 0777
+
     - name: Make instruction for create db
       template:
         src: templates/01_create_db.sql.j2
