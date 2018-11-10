@@ -40,6 +40,10 @@ class PageDownloader
                         $this->stats = $stats->getHandlerStats();
                     },
                     'http_errors' => false,
+                    'allow_redirects' => [
+                        'max'             => 10,        // allow at most 10 redirects.
+                        'track_redirects' => true
+                    ],
                 ]
             );
         } catch (\Exception $e) {
@@ -50,10 +54,24 @@ class PageDownloader
         if ($code !== 200) {
             throw new \Exception('Response code = '.$code);
         }
-        $url = $this->stats['url'];
-        $this->parseUrl($url);
+        $this->parseUrl($this->stats['url']);
+        $this->stats['redirects'] = $this->getRedirects();
+        $this->stats['headers'] = $this->response->getHeaders();
 
         return $this;
+    }
+
+    public function getRedirects()
+    {
+        // http://first-redirect, http://second-redirect, etc...
+        $redirects_url = $this->response->getHeaderLine('X-Guzzle-Redirect-History');
+        $result['urls'] = explode(' ', $redirects_url);
+
+        // 301, 302, etc...
+        $redirects_code = $this->response->getHeaderLine('X-Guzzle-Redirect-Status-History');
+        $result['codes'] = explode(' ', $redirects_code);
+
+        return $result;
     }
 
     public function parseUrl($url)
