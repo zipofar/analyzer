@@ -31,16 +31,13 @@ class Collector
 
         $images = \App\Misc\Parser::getImages($this->html->resource);
         $this->addResources($images, \App\Resources\Images::class);
-/*
-        $styles = \App\Misc\Parser::getStyles($html);
-        $this->addResources($styles, 'style');
 
-        $stylesheets = \App\Misc\Parser::getStyleSheets($html);
-        $this->addResources($stylesheets, 'stylesheet');
+        $styles = \App\Misc\Parser::getStyles($this->html->resource);
+        $this->addResources($styles, \App\Resources\Styles::class);
 
-        $images = \App\Misc\Parser::getImages($html);
-        $this->addResources($images, 'img');
-*/
+        $styleSheets = \App\Misc\Parser::getStyleSheets($this->html->resource);
+        $this->addResources($styleSheets, \App\Resources\StyleSheets::class);
+
         $this->download();
     }
 
@@ -95,14 +92,14 @@ class Collector
         return $this->resources;
     }
 
-    public function getExtScripts()
+    public function getExternalScripts()
     {
         return array_filter($this->resources, function ($item) {
             return $item instanceof \App\Resources\Script && $item->location === \App\Resources\Tag::EXTERNAL;
         });
     }
 
-    public function getIntScripts()
+    public function getInternalScripts()
     {
         return array_filter($this->resources, function ($item) {
             return $item instanceof \App\Resources\Script && $item->location === \App\Resources\Tag::INTERNAL;
@@ -113,6 +110,35 @@ class Collector
     {
         return array_filter($this->resources, function ($item) {
             return $item instanceof \App\Resources\Script && $item->location === \App\Resources\Tag::INLINE;
+        });
+    }
+
+    public function getExternalStyleSheets()
+    {
+        return array_filter($this->resources, function ($item) {
+            return $item instanceof \App\Resources\StyleSheets && $item->location === \App\Resources\Tag::EXTERNAL;
+        });
+    }
+
+    public function getInternalStyleSheets()
+    {
+        return array_filter($this->resources, function ($item) {
+            return $item instanceof \App\Resources\StyleSheets && $item->location === \App\Resources\Tag::INTERNAL;
+        });
+    }
+
+
+    public function getInlineStyles()
+    {
+        return array_filter($this->resources, function ($item) {
+            return $item instanceof \App\Resources\Styles;
+        });
+    }
+
+    public function getImages()
+    {
+        return array_filter($this->resources, function ($item) {
+            return $item instanceof \App\Resources\Images;
         });
     }
 

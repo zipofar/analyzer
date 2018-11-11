@@ -32,7 +32,7 @@ abstract class Tag
 
     public function __construct($resource, \App\Resources\Html $html)
     {
-        $this->uid = uniqid();
+        $this->uid = mb_substr(md5($resource), 0, 10);
         $this->resource = $resource;
         $this->html = $html;
         $this->parseTag($this->pattern);
@@ -109,15 +109,22 @@ abstract class Tag
             return;
         }
         $originalSrc = $this->attr[$urlKey] ?? '';
-        $firstLetter = trim($originalSrc)[0];
-        if ($firstLetter === '/') {
+        $originalSrc = trim($originalSrc);
+        if ($this->beginStrWith($originalSrc, '//')) {
+            $this->url = $this->html->httpMethod.':'.$originalSrc;
+            $this->setHttpMethod($this->html->httpMethod);
+            $this->setDomain(Parser::getDomain($this->url));
+            return;
+        }
+
+        if ($this->beginStrWith($originalSrc, '/')) {
             $this->url = $this->html->httpMethod.'://'.$this->html->domain.$originalSrc;
             $this->setHttpMethod($this->html->httpMethod);
             $this->setDomain($this->html->domain);
             return;
         }
 
-        if (mb_stripos($originalSrc, 'http') === 0) {
+        if ($this->beginStrWith($originalSrc, 'http')) {
             $this->url = $originalSrc;
             $this->setHttpMethod(Parser::getHttpMethod($originalSrc));
             $this->setDomain(Parser::getDomain($originalSrc));
@@ -136,5 +143,12 @@ abstract class Tag
             return;
         }
         $this->setLocation(self::EXTERNAL);
+    }
+
+    protected function beginStrWith($haystack, $needle)
+    {
+        $haystack = mb_strtolower($haystack);
+        $needle = mb_strtolower($needle);
+        return mb_stripos($haystack, $needle) === 0 ? true : false;
     }
 }

@@ -19,8 +19,8 @@ class Analyzer
     {
         $this->result['page'] = $this->getPageAnalyzes();
         $this->result['scripts'] = $this->getScriptAnalyzes();
-        //$result['avg_response_time'] = $this->getAvgResponseTime();
-        //$result['scripts']['total_size'] = $this->getTotalSizeResource('script');
+        $this->result['images'] = $this->getImageAnalyzes();
+        $this->result['css'] = $this->getCssAnalyzes();
 
         return $this->result;
     }
@@ -29,8 +29,12 @@ class Analyzer
     {
         $result = [];
         $html = $this->collector->getHtml();
-        $result['response_time'] = $html->stats['starttransfer_time'] * 1000;
+        $result['response_time'] = $html->stats['starttransfer_time'] * 1000; // Milli seconds
         $result['count_redirects'] = sizeof($html->stats['redirects']['urls']);
+
+        $tagsWithBadRequest = $this->getTagsWithBadRequests();
+        $result['count_bad_requests'] = sizeof($tagsWithBadRequest);
+        $result['url_bad_requests'] = $this->getUrl($tagsWithBadRequest);
         return $result;
     }
 
@@ -38,18 +42,19 @@ class Analyzer
     {
         $result = [];
 
-        $internal = $this->collector->getIntScripts();
-        $external = $this->collector->getExtScripts();
+        $internal = $this->collector->getInternalScripts();
+        $external = $this->collector->getExternalScripts();
         $inline = $this->collector->getInlineScripts();
 
-        $result['int']['size'] = $this->getSize($internal);
-        $result['ext']['size'] = $this->getSize($external);
+        $result['int']['size'] = $this->getSumOfSizes($internal);
+        $result['ext']['size'] = $this->getSumOfSizes($external);
+        $result['total_size'] = $result['int']['size'] + $result['ext']['size'];
 
         $result['int']['count'] = sizeof($internal);
         $result['ext']['count'] = sizeof($external);
         $result['inline']['count'] = sizeof($inline);
+        $result['total_count'] = $result['int']['count'] + $result['ext']['count'];
 
-        $result['total_size'] = $result['int']['size'] + $result['ext']['size'];
 
         $result['int']['url'] = $this->getUrl($internal);
         $result['ext']['url'] = $this->getUrl($external);
@@ -58,7 +63,50 @@ class Analyzer
         return $result;
     }
 
-    protected function getSize(array $resources)
+    protected function getImageAnalyzes()
+    {
+        $result = [];
+        $images = $this->collector->getImages();
+        $result['total_size'] = $this->getSumOfSizes($images);
+        $result['total_count'] = sizeof($images);
+
+
+        $result['img'] = array_map(function (\App\Resources\Tag $item) {
+            return [
+                'url' => $item->url,
+                'size' => filesize($item->filePath),
+            ];
+        }, $images);
+
+        return $result;
+    }
+
+    protected function getCssAnalyzes()
+    {
+        $result = [];
+
+        $internal = $this->collector->getInternalStyleSheets();
+        $external = $this->collector->getExternalStyleSheets();
+        $inline = $this->collector->getInlineStyles();
+
+        $result['int']['size'] = $this->getSumOfSizes($internal);
+        $result['ext']['size'] = $this->getSumOfSizes($external);
+        $result['total_size'] = $result['int']['size'] + $result['ext']['size'];
+
+        $result['int']['count'] = sizeof($internal);
+        $result['ext']['count'] = sizeof($external);
+        $result['inline']['count'] = sizeof($inline);
+        $result['total_count'] = $result['int']['count'] + $result['ext']['count'];
+
+
+        $result['int']['url'] = $this->getUrl($internal);
+        $result['ext']['url'] = $this->getUrl($external);
+
+        $result['inline']['body'] = $this->getBody($inline);
+        return $result;
+    }
+
+    protected function getSumOfSizes(array $resources)
     {
         return array_reduce($resources, function ($acc, \App\Resources\Tag $item) {
             $fileSize = filesize($item->filePath);
@@ -80,26 +128,13 @@ class Analyzer
         }, $resources);
     }
 
-/*
-    public function getAvgResponseTime()
+    protected function getTagsWithBadRequests()
     {
-        $time = 0;
-        foreach ($this->collector as $resource) {
-            $time += (int) $resource->server['response_time'];
-        }
-        $avgTime = $time / sizeof($this->collector);
-        return $avgTime;
+        $tags = $this->collector->getAllTags();
+        return array_filter($tags, function (\App\Resources\Tag $item) {
+            $http_code = $item->stats['http_code'] ?? null;
+            return $http_code !== 200 && !empty($http_code);
+        });
     }
 
-    public function getTotalSizeResource($tagName)
-    {
-        $size = 0;
-        foreach ($this->collector as $resource) {
-            if ($resource->tagName === $tagName) {
-                $size += $resource->headers['Content-Length'] ?? 0;
-            }
-        }
-        return $size;
-    }
-*/
 }

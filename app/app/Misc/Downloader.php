@@ -10,12 +10,6 @@ class Downloader
     protected $client;
     protected $promises;
     protected $stats;
-    //protected $filePath;
-    //protected $url;
-    //protected $responseTime;
-    //protected $responseCode;
-    //protected $contentType;
-    //protected $httpMethod;
 
     public function __construct(Client $client)
     {
@@ -28,9 +22,11 @@ class Downloader
         $this->promises[$uid] = $this->client->getAsync($resource->url,
             [
                 'sink' => $resource->filePath,
+                'force_ip_resolve' => 'v4',
                 'on_stats' => function (\GuzzleHttp\TransferStats $stats) use ($uid) {
                     $this->stats[$uid] = $stats->getHandlerStats();
-                }
+                },
+                'debug' => fopen($resource->filePath.'_debug', 'w'),
             ]);
     }
 

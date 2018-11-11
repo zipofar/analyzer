@@ -20,6 +20,22 @@ class Parser
         return $tags;
     }
 
+    public static function getStyles($html)
+    {
+        $pattern = '/<style.*?>.*?<\/style>/mi';
+        preg_match_all($pattern, $html, $matches);
+        $tags = $matches[0];
+        return $tags;
+    }
+
+    public static function getStyleSheets($html)
+    {
+        $pattern = '/<link rel="stylesheet".*?>/mi';
+        preg_match_all($pattern, $html, $matches);
+        $tags = $matches[0];
+        return $tags;
+    }
+
 /*
     public static function getScripts($html)
     {

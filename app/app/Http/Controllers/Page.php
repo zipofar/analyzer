@@ -26,11 +26,9 @@ class Page extends BaseController
         $html = new Html($downloadedHtmlPage, $resource->method, $resource->domain);
         $html->setStats($resource->stats);
 
-        //$collector = new \App\Misc\Collector();
         $collector = app(\App\Misc\Collector::class);
         $collector->setHtml($html);
         $collector->getResources();
-        //var_dump($collector);
 
         $analyzer = new \App\Misc\Analyzer($collector);
         $resultOfAnalyzes = $analyzer->getAnalyzes();
