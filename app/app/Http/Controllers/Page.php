@@ -32,9 +32,9 @@ class Page extends BaseController
 
         $analyzer = new \App\Misc\Analyzer($collector);
         $resultOfAnalyzes = $analyzer->getAnalyzes();
-        var_dump($resultOfAnalyzes);
 
-        return 'OK';
+     //   var_dump($resultOfAnalyzes);
+        return view('analyzer', $resultOfAnalyzes);
     }
 
 
