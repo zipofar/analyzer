@@ -16,15 +16,15 @@ class Page extends BaseController
     {
         $url = $request->input('url');
 
-        try {
-            $resource = $downloader->download($url);
-        } catch (\Exception $e) {
-            return var_dump($e->getMessage());
+        $downloader->download($url);
+
+        if ($downloader->error !== null) {
+            return view('error', ['error' => $downloader->error]);
         }
 
-        $downloadedHtmlPage = \App\Misc\Helper::clearUnusedSymbols($resource->response->getBody());
-        $html = new Html($downloadedHtmlPage, $resource->method, $resource->domain);
-        $html->setStats($resource->stats);
+        $downloadedHtmlPage = \App\Misc\Helper::clearUnusedSymbols($downloader->response->getBody());
+        $html = new Html($downloadedHtmlPage, $downloader->method, $downloader->domain);
+        $html->setStats($downloader->stats);
 
         $collector = app(\App\Misc\Collector::class);
         $collector->setHtml($html);
