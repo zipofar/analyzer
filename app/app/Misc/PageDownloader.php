@@ -8,12 +8,15 @@ use Psr\Http\ResponseInterface;
 
 class PageDownloader
 {
+    const NOT_HTML = 1000;
+    const FILE_TOO_BIG = 1001;
+
     protected $client;
     protected $response;
     protected $method;
     protected $domain;
-    protected $code;
     protected $stats;
+    protected $error;
 
     public function __construct(Client $client)
     {
@@ -28,16 +31,16 @@ class PageDownloader
                     'on_headers' => function ($response) {
                         $contentType = $response->getHeaderLine('Content-Type');
                         if (\App\Misc\Helper::isHtml($contentType) === false) {
-                            throw new \Exception ('Not HTML type');
+                            throw new \Exception ('Not HTML type', self::NOT_HTML);
                         }
 
                         $contentLength = $response->getHeaderLine('Content-Length');
-                        if ($contentLength > 5000000) {
-                            throw new \Exception ('The file is too big');
+                        if ($contentLength > 1000000) {
+                            throw new \Exception ('The file is too big', self::FILE_TOO_BIG);
                         }
                     },
                     'on_stats' => function (TransferStats $stats) {
-                        $this->stats = $stats->getHandlerStats();
+                        $this->stats = $stats = $stats->getHandlerStats();
                     },
                     'http_errors' => false,
                     'allow_redirects' => [
@@ -47,18 +50,44 @@ class PageDownloader
                 ]
             );
         } catch (\Exception $e) {
-            throw $e->getPrevious();
+            $this->errorHandler($e);
+            return;
         }
 
-        $this->code = $code = $response->getStatusCode();
-        if ($code !== 200) {
-            throw new \Exception('Response code = '.$code);
-        }
         $this->parseUrl($this->stats['url']);
         $this->stats['redirects'] = $this->getRedirects();
         $this->stats['headers'] = $this->response->getHeaders();
+    }
 
-        return $this;
+    public function errorHandler($e)
+    {
+        $context = $e->getHandlerContext();
+        if (isset($context['errno'])) {
+            if ($context['errno'] == 3) {
+                $this->error = 'Not a valid url. Please enter valid URL - example - zipofar.ru';
+                return;
+            }
+
+            if ($context['errno'] == 6) {
+                $this->error = 'Could not resolve host';
+                return;
+            }
+        }
+
+        $previousException = $e->getPrevious();
+
+        if ($previousException !== null) {
+            if ($previousException->getCode() === self::NOT_HTML) {
+                $this->error = 'This resource is not HTML';
+                return;
+            }
+            if ($previousException->getCode() === self::FILE_TOO_BIG) {
+                $this->error = 'This resource bigger then 1 MB';
+                return;
+            }
+        }
+
+        $this->error = 'Something went wrong';
     }
 
     public function getRedirects()
