@@ -14,10 +14,9 @@ class Page extends BaseController
 
     public function handle(Request $request, \App\Misc\PageDownloader $downloader)
     {
+        var_dump($downloader); die;
         $url = $request->input('url');
-
         $downloader->download($url);
-
         if ($downloader->error !== null) {
             return view('error', ['error' => $downloader->error]);
         }

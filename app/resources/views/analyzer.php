@@ -1,5 +1,5 @@
-<?php require_once 'templates/header.php' ?>
-<?php require_once 'templates/form_test.php' ?>
+<?php require 'templates/header.php' ?>
+<?php require 'templates/form_test.php' ?>
             <div class="row">
                 <div class="col-md-6 col-sm-12">
                     <div class="card">

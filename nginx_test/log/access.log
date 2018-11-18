@@ -1,0 +1,2 @@
+172.18.0.1 - - [17/Nov/2018:21:45:05 +0000] "GET / HTTP/1.1" 200 123 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36" "-"
+172.18.0.1 - - [17/Nov/2018:21:45:05 +0000] "GET /favicon.ico HTTP/1.1" 404 555 "http://localhost:4002/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36" "-"

@@ -4,8 +4,14 @@ run:
 run-dev:
 	docker-compose -f docker-compose_dev.yml up -d
 
-kill:
+kill-prod:
 	docker-compose kill
+
+kill-dev:
+	docker-compose -f docker-compose_dev.yml kill
+
+down-dev:
+	docker-compose -f docker-compose_dev.yml down
 
 development-setup:
 	docker-compose -f docker-compose_dev.yml run php make dev-setup
