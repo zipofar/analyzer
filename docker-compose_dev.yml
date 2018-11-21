@@ -21,6 +21,7 @@ services:
     links:
       - mariadb
       - nginx_test
+      - nginx_test_ext
 
   mariadb:
     image: mariadb:latest
@@ -36,8 +37,18 @@ services:
     image: nginx:latest
     env_file: .env
     ports:
-    - "${WEBSERVER_TEST_PORT}:80"
+    - "${WEBSERVER_TEST1_PORT}:80"
     volumes:
     - ./nginx_test/conf.d:/etc/nginx/conf.d
     - ./nginx_test/sites:/var/www
     - ./nginx_test/log:/var/log/nginx
+
+  nginx_test_ext:
+    image: nginx:latest
+    env_file: .env
+    ports:
+    - "${WEBSERVER_TEST2_PORT}:80"
+    volumes:
+    - ./nginx_test_ext/conf.d:/etc/nginx/conf.d
+    - ./nginx_test_ext/sites:/var/www
+    - ./nginx_test_ext/log:/var/log/nginx
