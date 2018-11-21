@@ -10,4 +10,10 @@ class PageTest extends TestCase
         $response = $this->call('GET', '/');
         $this->assertContains('Page speed optimization', $this->response->getContent());
     }
+
+    public function test_Analyze()
+    {
+        $response = $this->call('POST', '/analyze', ['url' => 'http://nginx_test']);
+        $this->assertContains('Summary', $this->response->getContent());
+    }
 }
