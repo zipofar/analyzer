@@ -32,7 +32,7 @@ abstract class Tag
 
     public function __construct($resource, \App\Resources\Html $html)
     {
-        $this->uid = mb_substr(md5($resource), 0, 10);
+        $this->uid = mb_substr(md5($resource), 0, 10).time();
         $this->resource = $resource;
         $this->html = $html;
         $this->parseTag($this->pattern);
@@ -93,7 +93,7 @@ abstract class Tag
         if (!empty($attributes)) {
             $arrAttr = explode(' ', ltrim($attributes));
             $newAttr = array_reduce($arrAttr, function ($acc, $item) {
-                $keyVal = explode('=', $item);
+                $keyVal = explode('="', $item);
                 $key = $keyVal[0];
                 $value = $keyVal[1] ?? '';
                 $value = trim($value, '"\'');
