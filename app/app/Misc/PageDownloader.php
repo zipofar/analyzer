@@ -94,11 +94,14 @@ class PageDownloader
     {
         // http://first-redirect, http://second-redirect, etc...
         $redirects_url = $this->response->getHeaderLine('X-Guzzle-Redirect-History');
-        $result['urls'] = explode(' ', $redirects_url);
-
-        // 301, 302, etc...
         $redirects_code = $this->response->getHeaderLine('X-Guzzle-Redirect-Status-History');
-        $result['codes'] = explode(' ', $redirects_code);
+        if (empty($redirects_url)) {
+            $result['urls'] = [];
+            $result['codes'] = [];
+        } else {
+            $result['urls'] = explode(', ', $redirects_url);
+            $result['codes'] = explode(' ', $redirects_code);
+        }
 
         return $result;
     }
