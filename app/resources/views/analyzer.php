@@ -62,7 +62,7 @@
                             Images
                         </div>
                         <div class="card-body">
-                            <h2>Images size: <?= $scripts['total_size'] ?></h2>
+                            <h2>Images size: <?= $images['total_size'] ?></h2>
                             <?php foreach ($images['img'] as $img): ?>
 
                                 <p class="card-text">
