@@ -95,14 +95,20 @@ class Collector
     public function getExternalScripts()
     {
         return array_filter($this->resources, function ($item) {
-            return $item instanceof \App\Resources\Script && $item->location === \App\Resources\Tag::EXTERNAL;
+            $http_code = $item->stats['http_code'] ?? null;
+            return $item instanceof \App\Resources\Script
+                && $item->location === \App\Resources\Tag::EXTERNAL
+                && $http_code == 200;
         });
     }
 
     public function getInternalScripts()
     {
         return array_filter($this->resources, function ($item) {
-            return $item instanceof \App\Resources\Script && $item->location === \App\Resources\Tag::INTERNAL;
+            $http_code = $item->stats['http_code'] ?? null;
+            return $item instanceof \App\Resources\Script
+                && $item->location === \App\Resources\Tag::INTERNAL
+                && $http_code == 200;
         });
     }
 
@@ -116,14 +122,20 @@ class Collector
     public function getExternalStyleSheets()
     {
         return array_filter($this->resources, function ($item) {
-            return $item instanceof \App\Resources\StyleSheets && $item->location === \App\Resources\Tag::EXTERNAL;
+            $http_code = $item->stats['http_code'] ?? null;
+            return $item instanceof \App\Resources\StyleSheets
+                && $item->location === \App\Resources\Tag::EXTERNAL
+                && $http_code == 200;
         });
     }
 
     public function getInternalStyleSheets()
     {
         return array_filter($this->resources, function ($item) {
-            return $item instanceof \App\Resources\StyleSheets && $item->location === \App\Resources\Tag::INTERNAL;
+            $http_code = $item->stats['http_code'] ?? null;
+            return $item instanceof \App\Resources\StyleSheets
+                && $item->location === \App\Resources\Tag::INTERNAL
+                && $http_code == 200;
         });
     }
 
@@ -138,7 +150,8 @@ class Collector
     public function getImages()
     {
         return array_filter($this->resources, function ($item) {
-            return $item instanceof \App\Resources\Images;
+            $http_code = $item->stats['http_code'] ?? null;
+            return $item instanceof \App\Resources\Images && $http_code == 200;
         });
     }
 
