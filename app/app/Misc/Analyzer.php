@@ -55,7 +55,6 @@ class Analyzer
         $result['inline']['count'] = sizeof($inline);
         $result['total_count'] = $result['int']['count'] + $result['ext']['count'];
 
-
         $result['int']['url'] = $this->getUrl($internal);
         $result['ext']['url'] = $this->getUrl($external);
 
@@ -69,7 +68,6 @@ class Analyzer
         $images = $this->collector->getImages();
         $result['total_size'] = $this->getSumOfSizes($images);
         $result['total_count'] = sizeof($images);
-
 
         $result['img'] = array_map(function (\App\Resources\Tag $item) {
             return [
