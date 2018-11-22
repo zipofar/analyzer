@@ -8,3 +8,6 @@ test-func:
 	vendor/bin/phpunit tests/functional
 
 test-all: test-unit test-func
+
+update-autoload:
+	composer dump-autoload

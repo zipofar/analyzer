@@ -27,6 +27,10 @@ ansible-development-setup:
 	echo '' >> tmp/ansible-vault-password
 	ansible-playbook ansible/development.yml -i ansible/development -vv
 
+update-autoload:
+	docker-compose run php make update-autoload
+
+
 
 
 
