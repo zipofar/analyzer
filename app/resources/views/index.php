@@ -1,6 +1,3 @@
-<?php require_once 'templates/header.php' ?>
-<?php require_once 'templates/form_test.php' ?>
-<?php require_once 'templates/footer.php' ?>
-
-
-
+<?php require 'templates/header.php' ?>
+<?php require'templates/form_test.php' ?>
+<?php require 'templates/footer.php' ?>

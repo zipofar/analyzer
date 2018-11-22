@@ -73,4 +73,4 @@
                     </div>
                 </div>
             </div>
-<?php require_once 'templates/footer.php' ?>
+<?php require 'templates/footer.php' ?>

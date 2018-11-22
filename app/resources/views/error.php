@@ -1,6 +1,6 @@
 
-<?php require_once 'templates/header.php' ?>
-<?php require_once 'templates/form_test.php' ?>
+<?php require 'templates/header.php' ?>
+<?php require 'templates/form_test.php' ?>
 
 <div class="row">
     <div class="col-md-12">
@@ -12,4 +12,4 @@
 </div>
 
 
-<?php require_once 'templates/footer.php' ?>
+<?php require 'templates/footer.php' ?>
